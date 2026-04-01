@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Команди Дениса — повна колекція Minecraft команд із конструктором">
+<title>⛏ Команди Дениса</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════ TOKENS */
+:root {
+  --bg:#0d1b2a; --bg2:#102236; --bg3:#172f47; --surface:#1a3a52; --surface2:#1f4560;
+  --border:#2a6a85; --accent:#00e5ff; --accent2:#39ff14; --accent3:#ffd600;
+  --accent4:#ff6b35; --text:#ddf2ff; --text2:#88bdd4; --text3:#486a7a;
+  --r:4px; --fw:340px; --fz:14px; --shadow:0 4px 32px rgba(0,0,0,.55);
+  --anim-speed:0.2s;
+}
+[data-theme=light]{--bg:#e4f2f8;--bg2:#cce4ef;--bg3:#b0d4e8;--surface:#fff;--surface2:#f0f9ff;--border:#60aac8;--accent:#0077aa;--accent2:#1a8a00;--text:#082030;--text2:#2a5a72;--text3:#88b8cc}
+[data-theme=mc]{--bg:#1a0e00;--bg2:#241400;--bg3:#301a00;--surface:#3c2208;--surface2:#4e2e10;--border:#7a5018;--accent:#6ecb10;--accent2:#ffb300;--accent3:#e05020;--text:#f0ddb0;--text2:#bA8840;--text3:#7a5828}
+[data-theme=neon]{--bg:#060612;--bg2:#0a0a1e;--bg3:#0e0e28;--surface:#12122a;--surface2:#161638;--border:#4040c0;--accent:#ff00ff;--accent2:#00ffaa;--accent3:#ffff00;--text:#f0e0ff;--text2:#a080c0;--text3:#504070}
+[data-anim=off] *{animation:none!important;transition:none!important}
+[data-texture=grass] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;background-image:repeating-linear-gradient(0deg,#22c55e 0,transparent 2px),repeating-linear-gradient(90deg,#22c55e 0,transparent 2px);background-size:32px 32px}
+[data-texture=stone] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;background-image:repeating-linear-gradient(45deg,#64748b 0,transparent 2px),repeating-linear-gradient(-45deg,#64748b 0,transparent 2px);background-size:32px 32px}
+[data-texture=wood] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;background-image:repeating-linear-gradient(0deg,#a16230 0,transparent 5px);background-size:32px 32px}
+[data-texture=nether] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:repeating-linear-gradient(30deg,#8b0000 0,transparent 2px),repeating-linear-gradient(-30deg,#8b0000 0,transparent 2px);background-size:24px 24px}
+[data-texture=end] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:radial-gradient(circle 2px at 50% 50%,#7b2fff 0,transparent 100%);background-size:48px 48px}
+
+*, *::before, *::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:var(--fz);scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--anim-speed),color var(--anim-speed);overflow-x:hidden}
+
+/* ═══ HEADER */
+header{position:sticky;top:0;z-index:200;background:var(--bg2);border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px;box-shadow:0 2px 20px rgba(0,0,0,.5)}
+.logo{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--accent2);text-shadow:2px 2px 0 rgba(0,0,0,.5);padding:14px 0;line-height:1.7;white-space:nowrap;flex-shrink:0}
+.logo em{color:var(--accent);font-style:normal}
+nav{display:flex;gap:3px;flex-wrap:wrap}
+.nb{font-family:'Press Start 2P',monospace;font-size:7px;padding:9px 12px;border:2px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all var(--anim-speed);border-radius:var(--r);white-space:nowrap;position:relative}
+.nb:hover{background:var(--surface);color:var(--text);border-color:var(--accent)}
+.nb.active{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 0 16px color-mix(in srgb,var(--accent) 50%,transparent)}
+.nb .badge{position:absolute;top:-6px;right:-6px;background:var(--accent4);color:#fff;font-size:6px;padding:2px 4px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:900}
+[data-theme=mc] .nb.active,[data-theme=neon] .nb.active{color:#fff}
+
+/* ═══ LAYOUT */
+main{position:relative;z-index:1}
+.sec{display:none}
+.sec.active{display:block}
+#cmd-sec{display:none}
+#cmd-sec.active{display:flex;flex-direction:column;height:calc(100vh - 62px)}
+
+/* ═══ TOOLBAR */
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.sw{position:relative;flex:1;min-width:160px}
+.sw svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;width:14px;height:14px}
+input[type=text],select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;transition:border-color var(--anim-speed);outline:none}
+input[type=text]:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 20%,transparent)}
+#si{width:100%;padding:8px 12px 8px 34px}
+#si::placeholder{color:var(--text3)}
+select{padding:8px 10px;cursor:pointer}
+.sb{padding:7px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-size:12px;cursor:pointer;transition:all var(--anim-speed);white-space:nowrap}
+.sb:hover,.sb.on{background:var(--surface);color:var(--accent);border-color:var(--accent)}
+.cnt{font-size:11px;color:var(--text3);white-space:nowrap;padding-left:4px}
+
+/* ═══ CMD BODY */
+.cb{display:flex;flex:1;overflow:hidden}
+.clw{flex:0 0 auto;width:calc(100% - var(--fw));display:flex;flex-direction:column;border-right:2px solid var(--border);overflow:hidden}
+.cl{flex:1;overflow-y:auto;padding:6px}
+.cl::-webkit-scrollbar{width:5px}
+.cl::-webkit-scrollbar-track{background:var(--bg2)}
+.cl::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.cc{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:3px;border:1px solid transparent;border-radius:var(--r);cursor:pointer;transition:all var(--anim-speed);animation:fs .15s both}
+.cc:hover{background:var(--surface);border-color:var(--border)}
+.cc.sel{background:var(--surface);border-color:var(--accent)}
+.cc.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:var(--r) 0 0 var(--r)}
+.cc{position:relative}
+.ci{width:30px;height:30px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border)}
+.cif{flex:1;min-width:0}
+.cn{font-weight:800;font-size:12.5px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Courier New',monospace}
+.ccat{font-size:10px;color:var(--text3)}
+.cds{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+[data-card=exp] .cc{flex-direction:column;align-items:flex-start;padding:11px}
+[data-card=exp] .ci{display:none}
+[data-card=exp] .cn{font-size:14px}
+[data-card=exp] .cds{white-space:normal;overflow:visible}
+
+/* ═══ PAGINATION */
+.pag{display:flex;align-items:center;justify-content:center;gap:3px;padding:8px;border-top:1px solid var(--border);background:var(--bg2);flex-wrap:wrap}
+.pb{width:30px;height:30px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);border-radius:var(--r);cursor:pointer;font-size:11px;transition:all var(--anim-speed);display:flex;align-items:center;justify-content:center}
+.pb:hover{background:var(--surface);color:var(--text)}
+.pb.on{background:var(--accent);color:#000;border-color:var(--accent)}
+.pb:disabled{opacity:.3;cursor:not-allowed}
+
+/* ═══ SIDEBAR */
+.cs{width:var(--fw);flex-shrink:0;background:var(--bg2);display:flex;flex-direction:column;overflow-y:auto}
+.cs::-webkit-scrollbar{width:5px}
+.cs::-webkit-scrollbar-track{background:var(--bg2)}
+.cs::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.se{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center}
+.se .ei{font-size:52px;opacity:.25;animation:bob 2s ease-in-out infinite}
+.se p{color:var(--text3);font-size:12px;line-height:1.7}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.sc{padding:18px;display:flex;flex-direction:column;gap:14px}
+.sh{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.scn{font-family:'Courier New',monospace;font-size:18px;font-weight:800;color:var(--accent);line-height:1.2}
+.sbd{padding:3px 10px;border-radius:20px;background:var(--surface);border:1px solid var(--border);font-size:10px;color:var(--accent2);white-space:nowrap;font-weight:800}
+.sb2{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.sl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:7px}
+.sv{font-size:12.5px;color:var(--text2);line-height:1.65}
+.sb2.syn .sv{font-family:'Courier New',monospace;color:var(--accent3);font-size:11.5px;background:rgba(0,0,0,.25);padding:7px;border-radius:2px}
+.sb2.ex .sv{font-family:'Courier New',monospace;color:var(--accent2);font-size:11.5px}
+.cpb{margin-top:8px;padding:5px 11px;background:var(--surface);border:1px solid var(--border);color:var(--text2);border-radius:var(--r);cursor:pointer;font-size:10.5px;transition:all var(--anim-speed);display:inline-flex;align-items:center;gap:5px;font-family:'Nunito',sans-serif}
+.cpb:hover{background:var(--surface2);color:var(--text);border-color:var(--accent)}
+.cpb.ok{color:var(--accent2);border-color:var(--accent2)}
+.buld-btn{width:100%;padding:10px;background:var(--accent);color:#000;border:none;border-radius:var(--r);cursor:pointer;font-size:11.5px;font-family:'Press Start 2P',monospace;font-weight:700;transition:all var(--anim-speed);margin-top:4px}
+.buld-btn:hover{opacity:.85;transform:translateY(-1px)}
+[data-theme=mc] .buld-btn,[data-theme=neon] .buld-btn{color:#fff}
+
+/* ═══ NO RESULTS */
+.nr{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px}
+.nr big{font-size:32px;display:block;margin-bottom:10px}
+
+/* ═══ BUILDER SECTION */
+#bld-sec{padding:20px;max-width:860px;margin:0 auto}
+.bld-title{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--accent2);margin-bottom:18px}
+.bld-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.bld-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.bld-card-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.bld-search{width:100%;margin-bottom:10px}
+.bld-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.bld-list::-webkit-scrollbar{width:5px}
+.bld-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.bld-item{padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:12px;color:var(--text2);transition:all var(--anim-speed);font-family:'Courier New',monospace;border:1px solid transparent;display:flex;align-items:center;gap:8px}
+.bld-item:hover{background:var(--bg3);border-color:var(--border);color:var(--text)}
+.bld-item.sel{background:var(--bg3);border-color:var(--accent);color:var(--accent)}
+.bld-item .bld-cat{font-family:'Nunito',sans-serif;font-size:10px;color:var(--text3);margin-left:auto}
+
+.bld-params{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.bld-params-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.bld-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.bld-field{display:flex;flex-direction:column;gap:5px}
+.bld-field label{font-size:11px;font-weight:700;color:var(--text2)}
+.bld-field .req{color:var(--accent4);margin-left:3px;font-size:9px}
+.bld-field .opt-tag{color:var(--text3);margin-left:3px;font-size:9px}
+.bld-field input,.bld-field select{width:100%;padding:8px 10px;font-size:12px}
+.bld-field input{font-family:'Courier New',monospace}
+.bld-empty-params{color:var(--text3);font-size:12px;font-style:italic;text-align:center;padding:12px}
+
+.bld-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.bld-preview-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px}
+.bld-cmd-out{font-family:'Courier New',monospace;font-size:14px;color:var(--accent);word-break:break-all;line-height:1.5}
+.bld-cmd-out .ph{color:var(--text3)}
+.bld-actions{display:flex;gap:8px;flex-wrap:wrap}
+.bld-btn{padding:9px 16px;border-radius:var(--r);cursor:pointer;font-size:12px;font-family:'Nunito',sans-serif;font-weight:700;transition:all var(--anim-speed);border:1px solid}
+.bld-btn.primary{background:var(--accent);color:#000;border-color:var(--accent)}
+.bld-btn.primary:hover{opacity:.85}
+.bld-btn.secondary{background:var(--surface);color:var(--text2);border-color:var(--border)}
+.bld-btn.secondary:hover{border-color:var(--accent);color:var(--text)}
+[data-theme=mc] .bld-btn.primary,[data-theme=neon] .bld-btn.primary{color:#fff}
+
+.saved-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px}
+.saved-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.saved-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
+.saved-cmd{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r)}
+.saved-cmd-text{font-family:'Courier New',monospace;font-size:12px;color:var(--accent2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-cmd-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;transition:color var(--anim-speed)}
+.saved-cmd-del:hover{color:var(--danger,#f87171)}
+.saved-empty{color:var(--text3);font-size:12px;font-style:italic;text-align:center;padding:12px}
+
+/* ═══ GALLERY */
+#gal-sec{padding:20px}
+.gal-title{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--accent2);margin-bottom:16px}
+.gal-filters{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.gf-pill{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:all var(--anim-speed)}
+.gf-pill:hover,.gf-pill.on{background:var(--accent);color:#000;border-color:var(--accent)}
+[data-theme=mc] .gf-pill.on,[data-theme=neon] .gf-pill.on{color:#fff}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.gi{border-radius:var(--r);overflow:hidden;border:2px solid var(--border);cursor:pointer;transition:all var(--anim-speed);background:var(--surface);position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.gi:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.gi canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
+.gi img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;padding:8px}
+.gi .glbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:18px 8px 6px;font-size:10px;color:#fff;text-align:center;font-weight:700}
+.gi .gcat-tag{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:var(--accent3);font-size:8px;padding:2px 6px;border-radius:10px}
+.lb{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.lb.open{display:flex}
+.lb canvas,.lb img{max-width:90vw;max-height:75vh;image-rendering:pixelated;border:4px solid var(--border);border-radius:var(--r)}
+.lb img{object-fit:contain;background:var(--surface);padding:16px}
+.lb-name{color:#fff;font-family:'Press Start 2P',monospace;font-size:8px}
+.lb-close{position:fixed;top:18px;right:22px;font-size:26px;color:#fff;cursor:pointer;opacity:.7;background:none;border:none;transition:opacity var(--anim-speed)}
+.lb-close:hover{opacity:1}
+
+/* ═══ SETTINGS */
+#set-sec{padding:20px;max-width:720px;margin:0 auto}
+.st-title{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--accent2);margin-bottom:20px}
+.sg{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.sgt{font-size:10.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:7px 0;flex-wrap:wrap}
+.slbl{font-size:13px;color:var(--text2)}
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11.5px;cursor:pointer;transition:all var(--anim-speed)}
+.pill:hover{border-color:var(--accent);color:var(--text)}
+.pill.on{background:var(--accent);color:#000;border-color:var(--accent)}
+[data-theme=mc] .pill.on,[data-theme=neon] .pill.on{color:#fff}
+.color-swatch{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all var(--anim-speed)}
+.color-swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--accent)}
+.color-row{display:flex;gap:8px;align-items:center}
+input[type=range]{-webkit-appearance:none;width:120px;height:4px;border-radius:2px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer}
+
+/* ═══ TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:1000;background:var(--accent2);color:#000;padding:9px 18px;border-radius:var(--r);font-size:12.5px;font-weight:800;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ═══ ANIMATIONS */
+@keyframes fs{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pp{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.sc{animation:pp .2s both}
+
+/* ═══ RESPONSIVE */
+@media(max-width:860px){
+  .bld-top{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  :root{--fw:100%}
+  .cb{flex-direction:column}
+  .clw{width:100%;border-right:none;border-bottom:2px solid var(--border);height:55vh}
+  .cs{height:45vh}
+  header{padding:0 10px}
+  .logo{font-size:8px}
+  .nb{font-size:6px;padding:7px 9px}
+  .gg{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  #set-sec,#bld-sec,#gal-sec{padding:12px}
+}
+@media(max-width:440px){.logo{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⛏ Команди<br><em>Дениса</em></div>
+  <nav>
+    <button class="nb active" onclick="nav('cmd')">⚔ Команди</button>
+    <button class="nb" onclick="nav('bld')">🔧 Конструктор</button>
+    <button class="nb" onclick="nav('gal')">🖼 Галерея</button>
+    <button class="nb" onclick="nav('set')">⚙ Налаштування</button>
+  </nav>
+</header>
+<main>
+
+<!-- ══ COMMANDS ══ -->
+<section id="cmd-sec" class="sec active">
+  <div class="toolbar">
+    <div class="sw">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="si" type="text" placeholder="Пошук команд..." oninput="srch()">
+    </div>
+    <select id="cf" onchange="srch()"><option value="">Всі категорії</option></select>
+    <button class="sb on" id="sa" onclick="srt('a')">А–Я</button>
+    <button class="sb" id="sc2" onclick="srt('c')">Категорія</button>
+    <span class="cnt" id="cnt"></span>
+  </div>
+  <div class="cb">
+    <div class="clw">
+      <div class="cl" id="cl"></div>
+      <div class="pag" id="pag"></div>
+    </div>
+    <aside class="cs" id="cs">
+      <div class="se"><div class="ei">⛏</div><p>Виберіть команду зі списку<br>щоб побачити деталі</p></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ BUILDER ══ -->
+<section id="bld-sec" class="sec">
+  <p class="bld-title">🔧 КОНСТРУКТОР КОМАНД</p>
+  <div class="bld-top">
+    <div class="bld-card">
+      <div class="bld-card-title">1. Оберіть команду</div>
+      <input type="text" class="bld-search" placeholder="🔍 Фільтр команд..." oninput="filterBld(this.value)" style="width:100%;margin-bottom:10px;padding:7px 10px;font-size:12px">
+      <div class="bld-list" id="bld-list"></div>
+    </div>
+    <div class="bld-card">
+      <div class="bld-card-title">Інфо про команду</div>
+      <div id="bld-info" style="color:var(--text3);font-size:12px;line-height:1.7">↖ Оберіть команду зліва</div>
+    </div>
+  </div>
+  <div class="bld-params" id="bld-params">
+    <div class="bld-params-title">2. Заповніть параметри</div>
+    <div class="bld-empty-params">Спочатку оберіть команду</div>
+  </div>
+  <div class="bld-preview">
+    <div class="bld-preview-label">3. Ваша команда</div>
+    <div class="bld-cmd-out" id="bld-out"><span class="ph">← Оберіть команду і заповніть параметри</span></div>
+  </div>
+  <div class="bld-actions">
+    <button class="bld-btn primary" onclick="copyBuilt()">📋 Копіювати</button>
+    <button class="bld-btn secondary" onclick="saveBuilt()">💾 Зберегти</button>
+    <button class="bld-btn secondary" onclick="clearBld()">🗑 Очистити</button>
+  </div>
+  <div class="saved-sec">
+    <div class="saved-title">
+      <span>💾 Збережені команди (<span id="saved-cnt">0</span>)</span>
+      <button class="bld-btn secondary" style="padding:4px 10px;font-size:10px" onclick="clearSaved()">Очистити все</button>
+    </div>
+    <div class="saved-list" id="saved-list"><div class="saved-empty">Немає збережених команд</div></div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══ -->
+<section id="gal-sec" class="sec">
+  <p class="gal-title">🖼 ГАЛЕРЕЯ ПРЕДМЕТІВ</p>
+  <div class="gal-filters" id="gal-filters"></div>
+  <div class="gg" id="gg"></div>
+</section>
+
+<!-- ══ SETTINGS ══ -->
+<section id="set-sec" class="sec">
+  <p class="st-title">⚙ НАЛАШТУВАННЯ ДИЗАЙНУ</p>
+  <div class="sg">
+    <div class="sgt">🎨 Тема</div>
+    <div class="sr"><span class="slbl">Оформлення:</span>
+      <div class="pills">
+        <button class="pill on" onclick="set('theme','dark')">🌙 Темна</button>
+        <button class="pill" onclick="set('theme','light')">☀️ Світла</button>
+        <button class="pill" onclick="set('theme','mc')">⛏ Minecraft</button>
+        <button class="pill" onclick="set('theme','neon')">⚡ Неон</button>
+      </div>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sgt">🎨 Акцентний колір</div>
+    <div class="sr"><span class="slbl">Колір підсвітки:</span>
+      <div class="color-row">
+        <div class="color-swatch on" style="background:#00e5ff" onclick="setAccent('#00e5ff',this)" title="Блакитний"></div>
+        <div class="color-swatch" style="background:#39ff14" onclick="setAccent('#39ff14',this)" title="Зелений"></div>
+        <div class="color-swatch" style="background:#ff00ff" onclick="setAccent('#ff00ff',this)" title="Пурпурний"></div>
+        <div class="color-swatch" style="background:#ffd600" onclick="setAccent('#ffd600',this)" title="Золотий"></div>
+        <div class="color-swatch" style="background:#ff6b35" onclick="setAccent('#ff6b35',this)" title="Помаранчевий"></div>
+        <div class="color-swatch" style="background:#ff2d55" onclick="setAccent('#ff2d55',this)" title="Червоний"></div>
+      </div>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sgt">🔤 Шрифт</div>
+    <div class="sr"><span class="slbl">Розмір тексту:</span>
+      <div class="pills">
+        <button class="pill" onclick="set('fz','sm')">Малий</button>
+        <button class="pill on" onclick="set('fz','md')">Середній</button>
+        <button class="pill" onclick="set('fz','lg')">Великий</button>
+      </div>
+    </div>
+    <div class="sr"><span class="slbl">Тип шрифту:</span>
+      <div class="pills">
+        <button class="pill on" onclick="set('ff','nunito')">Nunito</button>
+        <button class="pill" onclick="set('ff','mono')">Monospace</button>
+        <button class="pill" onclick="set('ff','pixel')">Pixel</button>
+      </div>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sgt">🃏 Вигляд карток</div>
+    <div class="sr"><span class="slbl">Стиль карток:</span>
+      <div class="pills">
+        <button class="pill on" onclick="set('card','com')">Компактний</button>
+        <button class="pill" onclick="set('card','exp')">Розширений</button>
+      </div>
+    </div>
+    <div class="sr"><span class="slbl">Команд на сторінці:</span>
+      <div class="pills">
+        <button class="pill" onclick="set('pp','10')">10</button>
+        <button class="pill on" onclick="set('pp','20')">20</button>
+        <button class="pill" onclick="set('pp','30')">30</button>
+        <button class="pill" onclick="set('pp','50')">50</button>
+      </div>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sgt">🌿 Текстура фону</div>
+    <div class="sr"><span class="slbl">Фонова текстура:</span>
+      <div class="pills">
+        <button class="pill on" onclick="set('tex','none')">Без</button>
+        <button class="pill" onclick="set('tex','grass')">🌿 Трава</button>
+        <button class="pill" onclick="set('tex','stone')">🪨 Камінь</button>
+        <button class="pill" onclick="set('tex','wood')">🪵 Дерево</button>
+        <button class="pill" onclick="set('tex','nether')">🔥 Незер</button>
+        <button class="pill" onclick="set('tex','end')">🌌 Енд</button>
+      </div>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sgt">⚡ Анімації та ефекти</div>
+    <div class="sr"><span class="slbl">Анімації:</span>
+      <div class="pills">
+        <button class="pill on" onclick="set('anim','on')">Увімкнено</button>
+        <button class="pill" onclick="set('anim','off')">Вимкнено</button>
+      </div>
+    </div>
+    <div class="sr"><span class="slbl">Ширина панелі:</span>
+      <div class="pills">
+        <button class="pill" onclick="set('fw','sm')">Вузька</button>
+        <button class="pill on" onclick="set('fw','md')">Середня</button>
+        <button class="pill" onclick="set('fw','lg')">Широка</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="lb" id="lb" onclick="closeLb(event)">
+  <button class="lb-close" onclick="document.getElementById('lb').classList.remove('open')">✕</button>
+  <canvas id="lbcv" width="512" height="512"></canvas>
+  <div class="lb-name" id="lb-name"></div>
+</div>
+<div class="toast" id="toast">✓ Скопійовано!</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA — 150+ COMMANDS
+// ═══════════════════════════════════════════════════════
+const CMD=[
+// Предмети
+{id:1,n:"/give",cat:"Предмети",d:"Видає гравцеві вказаний предмет із інвентаря",syn:"/give <гравець> <предмет> [кількість]",ex:"/give Denys diamond_sword 1",res:"Видає алмазний меч гравцю Denys"},
+{id:2,n:"/enchant",cat:"Предмети",d:"Зачаровує предмет у руці гравця",syn:"/enchant <гравець> <зачарування> [рівень]",ex:"/enchant Denys sharpness 5",res:"Додає гостроту V до предмета в руці"},
+{id:3,n:"/item replace",cat:"Предмети",d:"Замінює предмет у вказаному слоті",syn:"/item replace entity <ціль> <слот> with <предмет> [кількість]",ex:"/item replace entity @s weapon.mainhand with netherite_sword",res:"Дає гравцю нефритовий меч у руку"},
+{id:4,n:"/item modify",cat:"Предмети",d:"Модифікує предмет через функцію модифікації предмета",syn:"/item modify entity <ціль> <слот> <функція>",ex:"/item modify entity @s weapon.mainhand mypack:repair",res:"Застосовує функцію ремонту до предмета"},
+// Телепортація
+{id:5,n:"/tp",cat:"Телепортація",d:"Телепортує гравця у вказані координати або до іншого гравця",syn:"/tp <гравець> <x> <y> <z>",ex:"/tp Denys 100 64 200",res:"Переміщує Denys до координат 100,64,200"},
+{id:6,n:"/teleport",cat:"Телепортація",d:"Розширена версія /tp з орієнтацією",syn:"/teleport <ціль> <x> <y> <z> [yRot] [xRot]",ex:"/teleport Denys Steve",res:"Телепортує Denys до позиції Steve"},
+{id:7,n:"/spreadplayers",cat:"Телепортація",d:"Розкидає гравців випадково по координатах",syn:"/spreadplayers <x> <z> <мін_відстань> <макс_радіус> false <ціль>",ex:"/spreadplayers 0 0 5 100 false @a",res:"Розкидає всіх гравців у радіусі 100 блоків"},
+// Режими гри
+{id:8,n:"/gamemode",cat:"Режими",d:"Змінює режим гри для гравця",syn:"/gamemode <режим> [гравець]",ex:"/gamemode creative Denys",res:"Вмикає творчий режим для Denys"},
+{id:9,n:"/defaultgamemode",cat:"Режими",d:"Встановлює стандартний режим для нових гравців",syn:"/defaultgamemode <режим>",ex:"/defaultgamemode survival",res:"Нові гравці з'являться у режимі виживання"},
+{id:10,n:"/spectate",cat:"Режими",d:"Переводить у режим спостерігача від імені сутності",syn:"/spectate [ціль] [гравець]",ex:"/spectate @e[type=creeper,limit=1]",res:"Переглядає світ очима крипера"},
+// Час і погода
+{id:11,n:"/time set",cat:"Світ",d:"Встановлює час доби у світі",syn:"/time set <значення>",ex:"/time set day",res:"Встановлює день"},
+{id:12,n:"/time add",cat:"Світ",d:"Додає час до поточного ігрового часу",syn:"/time add <кількість>",ex:"/time add 6000",res:"Прискорює час на пів ігрового дня"},
+{id:13,n:"/time query",cat:"Світ",d:"Показує поточний час або кількість днів у світі",syn:"/time query daytime|gametime|day",ex:"/time query daytime",res:"Показує поточний час дня у тіках"},
+{id:14,n:"/weather",cat:"Світ",d:"Змінює погоду у поточному вимірі",syn:"/weather <clear|rain|thunder> [час]",ex:"/weather clear",res:"Вмикає сонячну погоду"},
+{id:15,n:"/weather rain",cat:"Світ",d:"Вмикає дощ у поточному вимірі",syn:"/weather rain [тривалість]",ex:"/weather rain 1200",res:"Починає дощ на 1 хвилину"},
+{id:16,n:"/weather thunder",cat:"Світ",d:"Вмикає грозу у поточному вимірі",syn:"/weather thunder [тривалість]",ex:"/weather thunder 6000",res:"Починає грозу на 5 хвилин"},
+// Гравці
+{id:17,n:"/kill",cat:"Гравці",d:"Вбиває сутність або гравця миттєво",syn:"/kill [ціль]",ex:"/kill @e[type=zombie]",res:"Вбиває всіх зомбі у світі"},
+{id:18,n:"/xp add",cat:"Гравці",d:"Додає або знімає очки досвіду",syn:"/xp add <гравець> <кількість> [points|levels]",ex:"/xp add Denys 100 levels",res:"Дає 100 рівнів досвіду Denys"},
+{id:19,n:"/experience add",cat:"Гравці",d:"Синонім /xp add — додає або знімає досвід",syn:"/experience add <гравець> <кількість> [points|levels]",ex:"/experience add @a 500 points",res:"Дає 500 очків досвіду всім гравцям"},
+{id:20,n:"/spawnpoint",cat:"Гравці",d:"Встановлює або скидає точку відродження гравця",syn:"/spawnpoint [гравець] [x y z] [кут]",ex:"/spawnpoint Denys 0 64 0",res:"Задає Denys місце відродження на 0,64,0"},
+{id:21,n:"/list",cat:"Гравці",d:"Показує список гравців онлайн та їх кількість",syn:"/list [uuids]",ex:"/list",res:"Відображає всіх підключених гравців"},
+{id:22,n:"/damage",cat:"Гравці",d:"Наносить пошкодження вказаній сутності",syn:"/damage <ціль> <кількість> [тип] [at|by <ціль>]",ex:"/damage Denys 5 fire",res:"Завдає 5 вогняної шкоди Denys"},
+{id:23,n:"/heal",cat:"Гравці",d:"Відновлює здоров'я гравця (плагін або команда даних)",syn:"/effect give <гравець> regeneration 10 10",ex:"/effect give Denys regeneration 10 10",res:"Швидко відновлює HP гравця"},
+// Сутності
+{id:24,n:"/summon",cat:"Сутності",d:"Викликає вказану сутність у вказаному місці",syn:"/summon <сутність> [x y z] [NBT]",ex:"/summon creeper ~ ~ ~",res:"Викликає крипера на поточних координатах"},
+{id:25,n:"/tag",cat:"Сутності",d:"Управляє тегами сутностей для фільтрації",syn:"/tag <ціль> add|remove|list <тег>",ex:"/tag Denys add VIP",res:"Позначає Denys тегом VIP"},
+{id:26,n:"/ride",cat:"Сутності",d:"Садить одну сутність на іншу",syn:"/ride <ціль> mount|dismount <носій>",ex:"/ride @s mount @e[type=horse,limit=1]",res:"Гравець сідає на найближчого коня"},
+{id:27,n:"/attribute",cat:"Сутності",d:"Читає або змінює базові атрибути сутності",syn:"/attribute <ціль> <атрибут> get|base set <значення>",ex:"/attribute @s generic.max_health base set 40",res:"Збільшує максимальне HP гравця до 40"},
+// Ефекти
+{id:28,n:"/effect give",cat:"Ефекти",d:"Додає ефект зілля до гравця або сутності",syn:"/effect give <ціль> <ефект> [тривалість] [потужність] [hide]",ex:"/effect give Denys speed 60 2",res:"Дає швидкість III на 60 секунд"},
+{id:29,n:"/effect clear",cat:"Ефекти",d:"Видаляє ефект або всі ефекти з сутності",syn:"/effect clear [ціль] [ефект]",ex:"/effect clear Denys",res:"Знімає всі ефекти з Denys"},
+{id:30,n:"/particle",cat:"Ефекти",d:"Відтворює частинковий ефект у вказаному місці",syn:"/particle <ефект> <x y z> [dx dy dz] [швидкість] [кількість]",ex:"/particle flame 0 70 0 1 1 1 0 200",res:"Створює 200 вогняних частинок"},
+// Чат і повідомлення
+{id:31,n:"/say",cat:"Чат",d:"Виводить повідомлення від імені сервера у чат",syn:"/say <повідомлення>",ex:"/say Привіт всім гравцям!",res:"Виводить системне повідомлення"},
+{id:32,n:"/tell",cat:"Чат",d:"Відправляє приватне повідомлення гравцеві",syn:"/tell <гравець> <повідомлення>",ex:"/tell Denys Секретне повідомлення",res:"Надсилає шепіт гравцю Denys"},
+{id:33,n:"/msg",cat:"Чат",d:"Синонім команди /tell для приватних повідомлень",syn:"/msg <гравець> <повідомлення>",ex:"/msg Denys Привіт!",res:"Відправляє особисте повідомлення"},
+{id:34,n:"/w",cat:"Чат",d:"Скорочений синонім /tell та /msg",syn:"/w <гравець> <повідомлення>",ex:"/w Denys Тихо!",res:"Відправляє шепіт гравцю"},
+{id:35,n:"/me",cat:"Чат",d:"Виводить дію від третьої особи у чат",syn:"/me <дія>",ex:"/me танцює на снігу",res:"Показує: * Denys танцює на снігу"},
+{id:36,n:"/teammsg",cat:"Чат",d:"Надсилає повідомлення всім членам команди",syn:"/teammsg <повідомлення>",ex:"/teammsg Атакуємо базу!",res:"Повідомлення у командний чат"},
+// UI і відображення
+{id:37,n:"/title",cat:"UI",d:"Показує великий заголовок або підзаголовок на екрані",syn:"/title <ціль> title|subtitle|actionbar <JSON>",ex:'/title @a title {"text":"СТАРТ!","bold":true,"color":"gold"}',res:"Показує золотий жирний напис СТАРТ"},
+{id:38,n:"/title clear",cat:"UI",d:"Очищає заголовки з екрана гравця",syn:"/title <ціль> clear",ex:"/title @a clear",res:"Забирає заголовок з екранів всіх гравців"},
+{id:39,n:"/title times",cat:"UI",d:"Налаштовує час появи, показу і зникнення заголовка",syn:"/title <ціль> times <fadeIn> <stay> <fadeOut>",ex:"/title @a times 20 60 20",res:"Заголовок: 1сек появи, 3сек показу, 1сек зникнення"},
+{id:40,n:"/bossbar add",cat:"UI",d:"Створює шкалу боса у верхній частині екрана",syn:"/bossbar add <id> <назва JSON>",ex:'/bossbar add bar1 {"text":"💀 Рейд","color":"red"}',res:"Додає червону шкалу з написом Рейд"},
+{id:41,n:"/bossbar set",cat:"UI",d:"Змінює параметри шкали боса",syn:"/bossbar set <id> color|max|name|players|style|value|visible <значення>",ex:"/bossbar set bar1 value 75",res:"Встановлює шкалу боса на 75%"},
+{id:42,n:"/bossbar remove",cat:"UI",d:"Видаляє шкалу боса",syn:"/bossbar remove <id>",ex:"/bossbar remove bar1",res:"Видаляє шкалу bar1 з екрану"},
+// Звук
+{id:43,n:"/playsound",cat:"Звук",d:"Програє звуковий ефект для вказаного гравця",syn:"/playsound <звук> <категорія> <ціль> [x y z] [гучність] [висота]",ex:"/playsound entity.player.levelup master @a",res:"Грає звук підвищення рівня для всіх"},
+{id:44,n:"/stopsound",cat:"Звук",d:"Зупиняє звуки для вказаного гравця",syn:"/stopsound <ціль> [категорія] [звук]",ex:"/stopsound @a * *",res:"Вимикає всі звуки для всіх гравців"},
+// Будівництво
+{id:45,n:"/setblock",cat:"Будівництво",d:"Встановлює блок у вказаній позиції",syn:"/setblock <x> <y> <z> <блок> [destroy|keep|replace]",ex:"/setblock 0 64 0 diamond_block",res:"Ставить діамантовий блок на 0,64,0"},
+{id:46,n:"/fill",cat:"Будівництво",d:"Заповнює прямокутну область вказаними блоками",syn:"/fill <x1> <y1> <z1> <x2> <y2> <z2> <блок> [режим]",ex:"/fill 0 64 0 10 64 10 stone",res:"Заповнює квадрат 11×11 каменем"},
+{id:47,n:"/fill hollow",cat:"Будівництво",d:"Заповнює порожнистий куб — тільки стіни",syn:"/fill <x1> <y1> <z1> <x2> <y2> <z2> <блок> hollow",ex:"/fill 0 64 0 10 74 10 stone_bricks hollow",res:"Будує коробку з кам'яної цегли"},
+{id:48,n:"/fill outline",cat:"Будівництво",d:"Заповнює тільки зовнішні стіни куба",syn:"/fill <x1> <y1> <z1> <x2> <y2> <z2> <блок> outline",ex:"/fill 0 64 0 10 74 10 oak_planks outline",res:"Обводить простір дубовими дошками"},
+{id:49,n:"/clone",cat:"Будівництво",d:"Копіює структуру блоків в інше місце",syn:"/clone <x1 y1 z1> <x2 y2 z2> <dx dy dz> [режим]",ex:"/clone 0 64 0 10 74 10 20 64 0",res:"Копіює будівлю в нову позицію"},
+{id:50,n:"/structure save",cat:"Будівництво",d:"Зберігає структуру блоків у файл",syn:"/structure save <назва> <x1 y1 z1> <x2 y2 z2> [режим] [entities]",ex:"/structure save myhouse 0 60 0 20 80 20",res:"Зберігає будинок у файл структури"},
+{id:51,n:"/structure load",cat:"Будівництво",d:"Завантажує збережену структуру",syn:"/structure load <назва> <x y z> [обертання] [дзеркало]",ex:"/structure load myhouse 100 64 100",res:"Будує збережений будинок на нових координатах"},
+{id:52,n:"/place structure",cat:"Будівництво",d:"Встановлює вбудовану ігрову структуру",syn:"/place structure <структура> <x y z>",ex:"/place structure village/plains/houses/big_house 0 64 0",res:"Будує структуру будинку plains village"},
+// Адмін
+{id:53,n:"/ban",cat:"Адмін",d:"Постійно блокує гравця від підключення",syn:"/ban <гравець> [причина]",ex:"/ban Griefer Порушення правил",res:"Блокує гравця Griefer назавжди"},
+{id:54,n:"/ban-ip",cat:"Адмін",d:"Блокує IP-адресу гравця від підключення",syn:"/ban-ip <гравець|IP> [причина]",ex:"/ban-ip Griefer Хакінг",res:"Блокує IP гравця Griefer"},
+{id:55,n:"/unban",cat:"Адмін",d:"Знімає блокування з гравця або IP",syn:"/unban <гравець>",ex:"/unban Griefer",res:"Відновлює доступ гравця Griefer"},
+{id:56,n:"/kick",cat:"Адмін",d:"Виганяє гравця із сервера без постійного бану",syn:"/kick <гравець> [причина]",ex:"/kick Noob AFK занадто довго",res:"Відключає Noob від сервера"},
+{id:57,n:"/op",cat:"Адмін",d:"Надає гравцеві права оператора сервера",syn:"/op <гравець>",ex:"/op Denys",res:"Робить Denys оператором сервера"},
+{id:58,n:"/deop",cat:"Адмін",d:"Знімає права оператора з гравця",syn:"/deop <гравець>",ex:"/deop Denys",res:"Забирає права адміністратора у Denys"},
+{id:59,n:"/whitelist add",cat:"Адмін",d:"Додає гравця до білого списку сервера",syn:"/whitelist add <гравець>",ex:"/whitelist add Denys",res:"Дозволяє Denys приєднатися до сервера"},
+{id:60,n:"/whitelist remove",cat:"Адмін",d:"Видаляє гравця з білого списку",syn:"/whitelist remove <гравець>",ex:"/whitelist remove Noob",res:"Забороняє Noob приєднуватися"},
+{id:61,n:"/whitelist on",cat:"Адмін",d:"Вмикає перевірку білого списку на сервері",syn:"/whitelist on",ex:"/whitelist on",res:"Лише гравці у списку можуть зайти"},
+{id:62,n:"/whitelist off",cat:"Адмін",d:"Вимикає перевірку білого списку",syn:"/whitelist off",ex:"/whitelist off",res:"Будь-хто може приєднатися до сервера"},
+{id:63,n:"/setidletimeout",cat:"Адмін",d:"Встановлює таймаут для AFK-гравців в хвилинах",syn:"/setidletimeout <хвилини>",ex:"/setidletimeout 15",res:"AFK-гравці будуть виключені через 15 хвилин"},
+// Правила світу
+{id:64,n:"/gamerule keepInventory",cat:"Правила",d:"Зберігає або скидає інвентар після смерті",syn:"/gamerule keepInventory <true|false>",ex:"/gamerule keepInventory true",res:"Гравець не втрачає предмети після смерті"},
+{id:65,n:"/gamerule doDaylightCycle",cat:"Правила",d:"Вмикає або зупиняє зміну дня та ночі",syn:"/gamerule doDaylightCycle <true|false>",ex:"/gamerule doDaylightCycle false",res:"Час зупиняється — вічний день або ніч"},
+{id:66,n:"/gamerule doWeatherCycle",cat:"Правила",d:"Вмикає або вимикає автоматичну зміну погоди",syn:"/gamerule doWeatherCycle <true|false>",ex:"/gamerule doWeatherCycle false",res:"Погода більше не змінюється сама"},
+{id:67,n:"/gamerule mobGriefing",cat:"Правила",d:"Дозволяє або забороняє мобам руйнувати блоки",syn:"/gamerule mobGriefing <true|false>",ex:"/gamerule mobGriefing false",res:"Крипери, ендери і ін. не ламають блоки"},
+{id:68,n:"/gamerule naturalRegeneration",cat:"Правила",d:"Вмикає або вимикає природне відновлення HP",syn:"/gamerule naturalRegeneration <true|false>",ex:"/gamerule naturalRegeneration false",res:"Гравці не відновлюють здоров'я автоматично"},
+{id:69,n:"/gamerule doFireTick",cat:"Правила",d:"Вмикає або зупиняє поширення вогню",syn:"/gamerule doFireTick <true|false>",ex:"/gamerule doFireTick false",res:"Вогонь більше не поширюється"},
+{id:70,n:"/gamerule doMobSpawning",cat:"Правила",d:"Вмикає або забороняє появу мобів",syn:"/gamerule doMobSpawning <true|false>",ex:"/gamerule doMobSpawning false",res:"Моби більше не з'являються"},
+{id:71,n:"/gamerule randomTickSpeed",cat:"Правила",d:"Встановлює швидкість випадкового тіку блоків",syn:"/gamerule randomTickSpeed <число>",ex:"/gamerule randomTickSpeed 300",res:"Прискорює зростання рослин та поширення вогню"},
+{id:72,n:"/gamerule doDrops",cat:"Правила",d:"Вмикає або вимикає падіння предметів після знищення блоку",syn:"/gamerule doTileDrops <true|false>",ex:"/gamerule doTileDrops false",res:"Блоки не дають предмети при руйнуванні"},
+{id:73,n:"/gamerule spawnRadius",cat:"Правила",d:"Встановлює радіус появи нових гравців від спавну",syn:"/gamerule spawnRadius <число>",ex:"/gamerule spawnRadius 0",res:"Всі нові гравці з'являються рівно на спавні"},
+{id:74,n:"/difficulty",cat:"Правила",d:"Встановлює рівень складності гри у світі",syn:"/difficulty <peaceful|easy|normal|hard>",ex:"/difficulty hard",res:"Вмикає важкий рівень складності"},
+// Навігація
+{id:75,n:"/locate",cat:"Навігація",d:"Знаходить найближчу структуру вказаного типу",syn:"/locate structure <структура>",ex:"/locate structure village",res:"Показує координати найближчого села"},
+{id:76,n:"/locate biome",cat:"Навігація",d:"Знаходить найближчий вказаний біом",syn:"/locate biome <біом>",ex:"/locate biome jungle",res:"Показує координати найближчих джунглів"},
+{id:77,n:"/seed",cat:"Навігація",d:"Відображає сід поточного ігрового світу",syn:"/seed",ex:"/seed",res:"Показує унікальний код генерації світу"},
+// Очки (scoreboard)
+{id:78,n:"/scoreboard objectives add",cat:"Очки",d:"Створює нове завдання для системи очок",syn:"/scoreboard objectives add <назва> <критерій> [відображення]",ex:"/scoreboard objectives add kills playerKillCount",res:"Створює лічильник вбивств гравців"},
+{id:79,n:"/scoreboard objectives setdisplay",cat:"Очки",d:"Показує таблицю очок у списку або над головою",syn:"/scoreboard objectives setdisplay <slot> [завдання]",ex:"/scoreboard objectives setdisplay sidebar kills",res:"Показує очки kills у правій панелі"},
+{id:80,n:"/scoreboard players set",cat:"Очки",d:"Встановлює значення очок для гравця",syn:"/scoreboard players set <ціль> <завдання> <число>",ex:"/scoreboard players set Denys kills 10",res:"Встановлює Denys 10 вбивств"},
+{id:81,n:"/scoreboard players add",cat:"Очки",d:"Додає очки гравцеві",syn:"/scoreboard players add <ціль> <завдання> <число>",ex:"/scoreboard players add Denys kills 1",res:"Додає 1 вбивство до рахунку Denys"},
+{id:82,n:"/scoreboard players reset",cat:"Очки",d:"Скидає очки гравця у вказаній категорії",syn:"/scoreboard players reset <ціль> [завдання]",ex:"/scoreboard players reset Denys kills",res:"Скидає кількість вбивств у Denys"},
+{id:83,n:"/trigger",cat:"Очки",d:"Дозволяє гравцеві самостійно змінювати тригер",syn:"/trigger <ціль> add|set <число>",ex:"/trigger score add 1",res:"Збільшує особистий лічильник на 1"},
+// Дані (NBT)
+{id:84,n:"/data get",cat:"Дані",d:"Читає NBT дані сутності, блоку або сховища",syn:"/data get entity <ціль> [шлях] [масштаб]",ex:"/data get entity @s Inventory",res:"Показує весь інвентар поточного гравця"},
+{id:85,n:"/data merge",cat:"Дані",d:"Оновлює або додає NBT дані до сутності",syn:"/data merge entity <ціль> <NBT>",ex:"/data merge entity @s {NoAI:1b}",res:"Вимикає штучний інтелект для цієї сутності"},
+{id:86,n:"/data modify",cat:"Дані",d:"Змінює конкретне поле NBT даних",syn:"/data modify entity <ціль> <шлях> set value <NBT>",ex:"/data modify entity @s Health set value 20.0f",res:"Встановлює здоров'я гравця на 20 (10 сердець)"},
+{id:87,n:"/data remove",cat:"Дані",d:"Видаляє конкретне поле NBT даних",syn:"/data remove entity <ціль> <шлях>",ex:"/data remove entity @e[type=item,limit=1] Tags",res:"Видаляє теги з найближчого предмета"},
+// Досягнення
+{id:88,n:"/advancement grant",cat:"Досягнення",d:"Дає гравцеві вказане або всі досягнення",syn:"/advancement grant <гравець> only|everything|from|through <адвансмент>",ex:"/advancement grant Denys everything",res:"Видає всі досягнення гравцю Denys"},
+{id:89,n:"/advancement revoke",cat:"Досягнення",d:"Забирає досягнення у гравця",syn:"/advancement revoke <гравець> only|everything|from|through <адвансмент>",ex:"/advancement revoke Denys everything",res:"Знімає всі досягнення у Denys"},
+// Рецепти
+{id:90,n:"/recipe give",cat:"Рецепти",d:"Відкриває рецепт крафту для гравця",syn:"/recipe give <гравець> <рецепт|*>",ex:"/recipe give Denys *",res:"Відкриває всі рецепти для Denys"},
+{id:91,n:"/recipe take",cat:"Рецепти",d:"Забирає рецепт крафту у гравця",syn:"/recipe take <гравець> <рецепт|*>",ex:"/recipe take Denys minecraft:crafting_table",res:"Забирає рецепт крафтового столу"},
+// Логіка / execute
+{id:92,n:"/execute as",cat:"Логіка",d:"Виконує команду від імені вказаної сутності",syn:"/execute as <ціль> run <команда>",ex:"/execute as @a run say Я живий!",res:"Кожен гравець скаже 'Я живий!'"},
+{id:93,n:"/execute at",cat:"Логіка",d:"Виконує команду на позиції вказаної сутності",syn:"/execute at <ціль> run <команда>",ex:"/execute at @e[type=zombie] run summon lightning_bolt ~ ~ ~",res:"Вдаряє блискавкою кожного зомбі"},
+{id:94,n:"/execute if block",cat:"Логіка",d:"Виконує команду якщо блок відповідає умові",syn:"/execute if block <x y z> <блок> run <команда>",ex:"/execute if block ~ ~-1 ~ grass_block run say Стоїш на траві!",res:"Повідомляє якщо гравець стоїть на траві"},
+{id:95,n:"/execute if entity",cat:"Логіка",d:"Виконує команду якщо сутність існує",syn:"/execute if entity <ціль> run <команда>",ex:"/execute if entity @e[type=creeper] run say Крипер поблизу!",res:"Попереджає про присутність крипера"},
+{id:96,n:"/execute if score",cat:"Логіка",d:"Виконує команду на основі порівняння очків",syn:"/execute if score <ціль> <завдання> matches <значення> run <команда>",ex:"/execute if score Denys kills matches 10.. run title @a title {\"text\":\"Переможець!\"}",res:"Показує заголовок якщо Denys набрав 10+ вбивств"},
+{id:97,n:"/execute positioned",cat:"Логіка",d:"Виконує команду у вказаній позиції",syn:"/execute positioned <x y z> run <команда>",ex:"/execute positioned 0 64 0 run summon zombie ~ ~ ~",res:"Викликає зомбі точно на 0,64,0"},
+{id:98,n:"/execute store",cat:"Логіка",d:"Зберігає результат команди у очки або NBT",syn:"/execute store result score <ціль> <завдання> run <команда>",ex:"/execute store result score @s health run data get entity @s Health",res:"Зберігає поточне HP у очки"},
+{id:99,n:"/return",cat:"Логіка",d:"Повертає значення з поточної функції",syn:"/return <число>|fail|run <команда>",ex:"/return 1",res:"Завершує функцію і повертає значення 1"},
+{id:100,n:"/random",cat:"Логіка",d:"Генерує випадкове число в заданому діапазоні",syn:"/random value <мін>..<макс>",ex:"/random value 1..6",res:"Повертає випадкове число від 1 до 6"},
+// Функції
+{id:101,n:"/function",cat:"Функції",d:"Виконує файл функції (.mcfunction) з дата-паку",syn:"/function <простір_імен:шлях>",ex:"/function mypack:reset",res:"Запускає функцію reset з пакету mypack"},
+{id:102,n:"/schedule",cat:"Функції",d:"Відкладає виконання функції на вказаний час",syn:"/schedule function <функція> <час> [append|replace]",ex:"/schedule function mypack:tick 1t append",res:"Запускає функцію кожен тік"},
+// Команди (teams)
+{id:103,n:"/team add",cat:"Команди",d:"Створює нову команду гравців",syn:"/team add <назва> [відображуване ім'я JSON]",ex:"/team add red {\"text\":\"Червоні\",\"color\":\"red\"}",res:"Створює червону команду з назвою 'Червоні'"},
+{id:104,n:"/team join",cat:"Команди",d:"Додає гравця або сутність до команди",syn:"/team join <команда> [ціль]",ex:"/team join red Denys",res:"Додає Denys до команди red"},
+{id:105,n:"/team leave",cat:"Команди",d:"Видаляє гравця або сутність з команди",syn:"/team leave <ціль>",ex:"/team leave Denys",res:"Виводить Denys з поточної команди"},
+{id:106,n:"/team modify",cat:"Команди",d:"Змінює параметри команди (колір, вогонь по своїх)",syn:"/team modify <команда> <параметр> <значення>",ex:"/team modify red friendlyFire false",res:"Забороняє вогонь по союзниках у червоній команді"},
+{id:107,n:"/team remove",cat:"Команди",d:"Видаляє команду гравців повністю",syn:"/team remove <команда>",ex:"/team remove red",res:"Повністю видаляє команду red"},
+// Межа світу
+{id:108,n:"/worldborder set",cat:"Межа",d:"Встановлює або змінює розмір межі світу",syn:"/worldborder set <розмір> [час]",ex:"/worldborder set 1000 60",res:"Зменшує межу до 1000 блоків за 60 секунд"},
+{id:109,n:"/worldborder center",cat:"Межа",d:"Переміщує центр межі світу",syn:"/worldborder center <x> <z>",ex:"/worldborder center 0 0",res:"Центрує межу на точці спавну"},
+{id:110,n:"/worldborder damage",cat:"Межа",d:"Налаштовує пошкодження за межею",syn:"/worldborder damage amount|buffer <значення>",ex:"/worldborder damage amount 1",res:"Гравці за межею отримують 1 HP/сек шкоди"},
+{id:111,n:"/worldborder warning",cat:"Межа",d:"Налаштовує попередження про наближення до межі",syn:"/worldborder warning distance|time <значення>",ex:"/worldborder warning distance 50",res:"Попередження з'являється за 50 блоків до межі"},
+// Чанки
+{id:112,n:"/forceload add",cat:"Чанки",d:"Примусово тримає чанки завантаженими",syn:"/forceload add <x1 z1> [x2 z2]",ex:"/forceload add -16 -16 16 16",res:"Тримає чанки навколо спавну завантаженими"},
+{id:113,n:"/forceload remove",cat:"Чанки",d:"Скасовує примусове завантаження чанків",syn:"/forceload remove <x1 z1> [x2 z2]|all",ex:"/forceload remove all",res:"Скасовує примусове завантаження всіх чанків"},
+// Сервер
+{id:114,n:"/save-all",cat:"Сервер",d:"Примусово зберігає всі дані та чанки на диск",syn:"/save-all [flush]",ex:"/save-all flush",res:"Зберігає всі дані гравців та чанки"},
+{id:115,n:"/save-off",cat:"Сервер",d:"Вимикає автоматичне збереження даних",syn:"/save-off",ex:"/save-off",res:"Зупиняє авто-збереження (для backup)"},
+{id:116,n:"/save-on",cat:"Сервер",d:"Відновлює автоматичне збереження даних",syn:"/save-on",ex:"/save-on",res:"Відновлює авто-збереження після backup"},
+{id:117,n:"/stop",cat:"Сервер",d:"Безпечно зупиняє сервер Minecraft",syn:"/stop",ex:"/stop",res:"Зберігає дані і вимикає сервер"},
+{id:118,n:"/reload",cat:"Сервер",d:"Перезавантажує дата-паки і ресурс-паки без перезапуску",syn:"/reload",ex:"/reload",res:"Оновлює всі пакети на льоту"},
+{id:119,n:"/publish",cat:"Сервер",d:"Відкриває одиночну гру для мережі LAN",syn:"/publish [allowCommands] [gamemode] [порт]",ex:"/publish true creative 25565",res:"Запускає LAN сервер на порту 25565"},
+// Діагностика
+{id:120,n:"/debug start",cat:"Діагностика",d:"Починає збір даних для профілювання продуктивності",syn:"/debug start|stop|report",ex:"/debug start",res:"Активує розширений режим відладки"},
+{id:121,n:"/perf",cat:"Діагностика",d:"Запускає 10-секундний тест продуктивності сервера",syn:"/perf start|stop",ex:"/perf start",res:"Починає вимірювання TPS і продуктивності"},
+{id:122,n:"/tick",cat:"Діагностика",d:"Управляє швидкістю ігрових тіків (20 = нормально)",syn:"/tick rate|freeze|step|unfreeze <значення>",ex:"/tick rate 4",res:"Сповільнює гру до 4 тіків/сек (повільний рух)"},
+{id:123,n:"/tick freeze",cat:"Діагностика",d:"Заморожує гру — всі сутності зупиняються",syn:"/tick freeze",ex:"/tick freeze",res:"Гра зупиняється, тіки перестають оброблятися"},
+// Система
+{id:124,n:"/help",cat:"Система",d:"Показує список команд або довідку по конкретній команді",syn:"/help [команда] [сторінка]",ex:"/help give",res:"Показує довідку по команді /give"},
+{id:125,n:"/clear",cat:"Інвентар",d:"Видаляє всі або вибрані предмети з інвентаря",syn:"/clear [ціль] [предмет] [кількість]",ex:"/clear Denys diamond",res:"Видаляє всі діаманти з інвентаря Denys"},
+{id:126,n:"/loot give",cat:"Інвентар",d:"Дає гравцеві предмети з лут-таблиці",syn:"/loot give <ціль> loot <таблиця>",ex:"/loot give Denys loot chests/simple_dungeon",res:"Дає предмети з лут-таблиці підземелля"},
+{id:127,n:"/loot spawn",cat:"Інвентар",d:"Випадає предмети з лут-таблиці у вказаному місці",syn:"/loot spawn <x y z> loot <таблиця>",ex:"/loot spawn 0 65 0 loot entities/zombie",res:"Дропає лут зомбі на вказаних координатах"},
+{id:128,n:"/drop",cat:"Інвентар",d:"Випадає предмет із рук гравця",syn:"/drop <ціль> all|mainhand|offhand",ex:"/drop @a mainhand",res:"Всі гравці викидають предмет з основної руки"},
+{id:129,n:"/rotate",cat:"Сутності",d:"Обертає сутність або задає напрямок погляду",syn:"/rotate <ціль> <yaw> <pitch>",ex:"/rotate Denys 90 0",res:"Повертає Denys обличчям на захід"},
+{id:130,n:"/move",cat:"Сутності",d:"Переміщує сутність на вказану відстань",syn:"/move <ціль> <напрямок> <відстань>",ex:"/move @s forward 5",res:"Переміщує гравця на 5 блоків вперед"},
+{id:131,n:"/place jigsaw",cat:"Будівництво",d:"Будує частину джигсо структури",syn:"/place jigsaw <пул> <ціль> <максГлибина> <x y z>",ex:"/place jigsaw minecraft:village/plains/town_centers minecraft:meeting_point 7 0 64 0",res:"Будує центр міста village"},
+{id:132,n:"/place feature",cat:"Будівництво",d:"Будує вказану природну геологічну особливість",syn:"/place feature <особливість> <x y z>",ex:"/place feature minecraft:oak_tree 0 65 0",res:"Садить дубове дерево"},
+{id:133,n:"/clear effects",cat:"Ефекти",d:"Видаляє всі ефекти з усіх гравців",syn:"/effect clear @a",ex:"/effect clear @a",res:"Знімає всі ефекти з усіх гравців сервера"},
+{id:134,n:"/give golden apple",cat:"Предмети",d:"Видає золоте яблуко з ефектами регенерації",syn:"/give <гравець> golden_apple [кількість]",ex:"/give Denys golden_apple 5",res:"Дає 5 золотих яблук гравцю Denys"},
+{id:135,n:"/give enchanted_golden_apple",cat:"Предмети",d:"Видає зачарований золотий яблуко (notch apple)",syn:"/give <гравець> enchanted_golden_apple",ex:"/give Denys enchanted_golden_apple 1",res:"Дає нотч-яблуко (бог-яблуко) гравцю Denys"},
+{id:136,n:"/summon wither",cat:"Сутності",d:"Викликає Вітера — боса Незеру",syn:"/summon wither <x y z>",ex:"/summon wither ~ ~5 ~",res:"Викликає Вітера над гравцем"},
+{id:137,n:"/summon ender_dragon",cat:"Сутності",d:"Викликає Ендер Дракона — фінального боса",syn:"/summon ender_dragon <x y z>",ex:"/summon ender_dragon 0 64 0",res:"Викликає Ендер Дракона в центрі світу"},
+{id:138,n:"/summon lightning_bolt",cat:"Сутності",d:"Вдаряє блискавкою у вказане місце",syn:"/summon lightning_bolt [x y z]",ex:"/summon lightning_bolt ~ ~ ~",res:"Блискавка б'є прямо на гравця"},
+{id:139,n:"/effect give strength",cat:"Ефекти",d:"Дає гравцеві ефект сили удару",syn:"/effect give <гравець> strength [тривалість] [потужність]",ex:"/effect give Denys strength 120 4",res:"Дає максимальну силу удару на 2 хвилини"},
+{id:140,n:"/effect give night_vision",cat:"Ефекти",d:"Дає нічний зір у темряві",syn:"/effect give <гравець> night_vision [тривалість]",ex:"/effect give @a night_vision 9999999",res:"Нічний зір назавжди для всіх"},
+{id:141,n:"/effect give invisibility",cat:"Ефекти",d:"Робить гравця або сутність невидимими",syn:"/effect give <гравець> invisibility [тривалість]",ex:"/effect give Denys invisibility 300 0 true",res:"Denys стає невидимим на 5 хвилин (без ефекту)"},
+{id:142,n:"/effect give water_breathing",cat:"Ефекти",d:"Дає можливість дихати під водою",syn:"/effect give <гравець> water_breathing [тривалість]",ex:"/effect give Denys water_breathing 600",res:"Дихання під водою на 10 хвилин"},
+{id:143,n:"/effect give haste",cat:"Ефекти",d:"Збільшує швидкість копання блоків",syn:"/effect give <гравець> haste [тривалість] [потужність]",ex:"/effect give Denys haste 300 2",res:"Швидкість копання x3 на 5 хвилин"},
+{id:144,n:"/effect give jump_boost",cat:"Ефекти",d:"Збільшує висоту стрибка",syn:"/effect give <гравець> jump_boost [тривалість] [потужність]",ex:"/effect give Denys jump_boost 60 10",res:"Дуже великий стрибок на 1 хвилину"},
+{id:145,n:"/effect give levitation",cat:"Ефекти",d:"Змушує сутність або гравця левітувати",syn:"/effect give <гравець> levitation [тривалість] [потужність]",ex:"/effect give @e[type=zombie] levitation 10 2",res:"Всі зомбі летять угору 10 секунд"},
+{id:146,n:"/enchant protection",cat:"Предмети",d:"Додає загальний захист до броні",syn:"/enchant <гравець> protection [рівень]",ex:"/enchant Denys protection 4",res:"Максимальний захист на броні"},
+{id:147,n:"/enchant mending",cat:"Предмети",d:"Додає ремонт досвідом до предмета",syn:"/enchant <гравець> mending",ex:"/enchant Denys mending",res:"Предмет ремонтується досвідом"},
+{id:148,n:"/enchant unbreaking",cat:"Предмети",d:"Збільшує міцність предмета",syn:"/enchant <гравець> unbreaking [рівень]",ex:"/enchant Denys unbreaking 3",res:"Максимальна міцність предмета"},
+{id:149,n:"/enchant fortune",cat:"Предмети",d:"Збільшує дроп при копанні блоків",syn:"/enchant <гравець> fortune [рівень]",ex:"/enchant Denys fortune 3",res:"Максимальний фортюн на кирці"},
+{id:150,n:"/enchant silk_touch",cat:"Предмети",d:"Дозволяє видобувати блоки без зміни",syn:"/enchant <гравець> silk_touch",ex:"/enchant Denys silk_touch",res:"Шовковий дотик — блоки не перетворюються"},
+];
+
+// ══ GALLERY DATA
+const GALLERY=[
+  {n:"Алмазний меч",cat:"Зброя",fn:pxSword},
+  {n:"Нефритовий меч",cat:"Зброя",fn:pxNetherSword},
+  {n:"Лук",cat:"Зброя",fn:pxBow},
+  {n:"Щит",cat:"Зброя",fn:pxShield},
+  {n:"Кирка",cat:"Інструменти",fn:pxPickaxe},
+  {n:"Лопата",cat:"Інструменти",fn:pxShovel},
+  {n:"Сокира",cat:"Інструменти",fn:pxAxe},
+  {n:"Блок трави",cat:"Блоки",fn:pxGrass},
+  {n:"Діамантовий блок",cat:"Блоки",fn:pxDiamondBlock},
+  {n:"TNT",cat:"Блоки",fn:pxTNT},
+  {n:"Скриня",cat:"Блоки",fn:pxChest},
+  {n:"Ендер-скриня",cat:"Блоки",fn:pxEnderChest},
+  {n:"Смолоскип",cat:"Блоки",fn:pxTorch},
+  {n:"Ліхтар",cat:"Блоки",fn:pxLantern},
+  {n:"Крипер",cat:"Моби",fn:pxCreeper},
+  {n:"Стів",cat:"Гравці",fn:pxSteve},
+  {n:"Алекс",cat:"Гравці",fn:pxAlex},
+  {n:"Діамант",cat:"Ресурси",fn:pxDiamond},
+  {n:"Смарагд",cat:"Ресурси",fn:pxEmerald},
+  {n:"Нефрит",cat:"Ресурси",fn:pxNetherite},
+  {n:"Ендерперла",cat:"Предмети",fn:pxPearl},
+  {n:"Золоте яблуко",cat:"Їжа",fn:pxGoldenApple},
+  {n:"Зілля",cat:"Предмети",fn:pxPotion},
+  {n:"Тотем безсмертя",cat:"Предмети",fn:pxTotem},
+];
+
+// ══ SUGGESTIONS FOR BUILDER
+const SUGG={
+  'гравець':['@p','@a','@s','@r','@e','Denys','Steve','Alex','Notch'],
+  'ціль':['@p','@a','@s','@r','@e','@e[type=zombie]','@e[type=creeper]','@e[limit=1]'],
+  'предмет':['diamond_sword','netherite_sword','diamond_pickaxe','bow','arrow','diamond','emerald','iron_ingot','gold_ingot','stone','grass_block','tnt','golden_apple','enchanted_golden_apple','shield','totem_of_undying','elytra'],
+  'кількість':['1','4','8','16','32','64'],
+  'ефект':['speed','strength','regeneration','resistance','fire_resistance','jump_boost','night_vision','invisibility','haste','saturation','levitation','slow_falling','water_breathing','absorption'],
+  'тривалість':['10','30','60','120','300','600','9999999'],
+  'потужність':['0','1','2','3','4','5'],
+  'режим':['creative','survival','adventure','spectator'],
+  'час':['0','1000','6000','12000','18000','24000'],
+  'x':['~','0','100','-100'],
+  'y':['~','64','100','200'],
+  'z':['~','0','100','-100'],
+  'блок':['stone','grass_block','diamond_block','obsidian','tnt','air','water','lava','sand','gravel','bedrock','oak_planks','stone_bricks'],
+  'сутність':['zombie','skeleton','creeper','spider','enderman','witch','villager','cow','pig','sheep','chicken','horse','wolf','wither','ender_dragon','lightning_bolt'],
+  'зачарування':['sharpness','smite','bane_of_arthropods','knockback','fire_aspect','looting','efficiency','silk_touch','fortune','protection','feather_falling','mending','unbreaking','infinity','power','punch'],
+  'рівень':['1','2','3','4','5'],
+  'правило':['keepInventory','doDaylightCycle','doWeatherCycle','mobGriefing','naturalRegeneration','doFireTick','doMobSpawning'],
+  'значення':['true','false','0','1'],
+  'структура':['village','stronghold','mineshaft','desert_pyramid','jungle_pyramid','ocean_monument','nether_fortress','end_city','mansion','ancient_city'],
+  'команда':['say Привіт!','kill @e[type=zombie]','summon creeper ~ ~ ~','tp @s 0 64 0'],
+};
+
+// ══ CATEGORY ICONS
+const CATI={'Предмети':'📦','Телепортація':'🌀','Режими':'🎮','Світ':'🌍','Гравці':'👤','Сутності':'🐾','Ефекти':'✨','Чат':'💬','UI':'🖥','Звук':'🔊','Будівництво':'🧱','Адмін':'🛡','Правила':'📜','Навігація':'🗺','Очки':'🏆','Дані':'💾','Характеристики':'⚡','Досягнення':'🥇','Рецепти':'📖','Логіка':'🔧','Функції':'⚙','Команди':'⚑','Межа':'🔲','Чанки':'📐','Сервер':'🖥','Діагностика':'🔍','Інвентар':'🎒','Система':'❓','Інше':'⚙'};
+
+// ═══════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════
+let filtered=[...CMD],pg=1,selId=null,srtMode='a';
+const cfg=JSON.parse(localStorage.getItem('dcfg')||'{}');
+let bldCmd=null,bldSaved=JSON.parse(localStorage.getItem('bldSaved')||'[]');
+
+// ═══ NAV
+function nav(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id+'-sec').classList.add('active');
+  document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('active',['cmd','bld','gal','set'][i]===id));
+  if(id==='bld') renderBld();
+  if(id==='gal') renderGal();
+}
+
+// ═══ BUILD CATEGORY SELECT
+function buildCats(){
+  const sel=document.getElementById('cf');
+  [...new Set(CMD.map(c=>c.cat))].sort().forEach(c=>{
+    const o=document.createElement('option');o.value=c;o.textContent=CATI[c]||'⚙'+' '+c;sel.appendChild(o);
+  });
+}
+
+// ═══ CMD LIST
+function getFiltered(){
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  const cat=document.getElementById('cf').value;
+  let d=CMD.filter(c=>(!q||c.n.includes(q)||c.d.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q))&&(!cat||c.cat===cat));
+  srtMode==='a'?d.sort((a,b)=>a.n.localeCompare(b.n)):d.sort((a,b)=>a.cat.localeCompare(b.cat)||a.n.localeCompare(b.n));
+  return d;
+}
+function getPP(){return parseInt(cfg.pp||'20');}
+function renderList(){
+  filtered=getFiltered();
+  const pp=getPP(),tot=filtered.length,totP=Math.max(1,Math.ceil(tot/pp));
+  if(pg>totP)pg=totP;
+  const page=filtered.slice((pg-1)*pp,pg*pp);
+  document.getElementById('cnt').textContent=tot+' команд';
+  const cl=document.getElementById('cl');
+  if(!page.length){cl.innerHTML='<div class="nr"><big>🔍</big>Нічого не знайдено</div>';renderPag(0);return;}
+  cl.setAttribute('data-card',cfg.card==='exp'?'exp':'');
+  cl.innerHTML=page.map((c,i)=>`
+    <div class="cc${c.id===selId?' sel':''}" onclick="selCmd(${c.id})" style="animation-delay:${i*.018}s">
+      <div class="ci">${CATI[c.cat]||'⚙'}</div>
+      <div class="cif">
+        <div class="cn">${c.n}</div>
+        <div class="ccat">${c.cat}</div>
+        <div class="cds">${c.d}</div>
+      </div>
+    </div>`).join('');
+  renderPag(totP);
+}
+function renderPag(tot){
+  const p=document.getElementById('pag');
+  if(tot<=1){p.innerHTML='';return;}
+  let h=`<button class="pb" onclick="goPg(${pg-1})" ${pg===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=tot;i++){
+    if(i===1||i===tot||Math.abs(i-pg)<=1) h+=`<button class="pb${i===pg?' on':''}" onclick="goPg(${i})">${i}</button>`;
+    else if(Math.abs(i-pg)===2) h+=`<span style="color:var(--text3)">…</span>`;
+  }
+  h+=`<button class="pb" onclick="goPg(${pg+1})" ${pg===tot?'disabled':''}>›</button>`;
+  p.innerHTML=h;
+}
+function goPg(n){pg=n;renderList();document.getElementById('cl').scrollTop=0;}
+function srch(){pg=1;renderList();}
+function srt(m){srtMode=m;document.getElementById('sa').classList.toggle('on',m==='a');document.getElementById('sc2').classList.toggle('on',m==='c');pg=1;renderList();}
+
+function selCmd(id){
+  selId=id;renderList();
+  const c=CMD.find(x=>x.id===id);
+  const syn=c.syn.replace(/`/g,'').replace(/'/g,"\\'");
+  const ex=c.ex.replace(/'/g,"\\'");
+  document.getElementById('cs').innerHTML=`
+    <div class="sc">
+      <div class="sh">
+        <div class="scn">${c.n}</div>
+        <div class="sbd">${CATI[c.cat]||'⚙'} ${c.cat}</div>
+      </div>
+      <div class="sb2"><div class="sl">📝 Опис</div><div class="sv">${c.d}</div></div>
+      <div class="sb2 syn"><div class="sl">⌨ Синтаксис</div><div class="sv">${c.syn}</div><button class="cpb" onclick="cp('${syn}',this)">📋 Копіювати</button></div>
+      <div class="sb2 ex"><div class="sl">▶ Приклад</div><div class="sv">${c.ex}</div><button class="cpb" onclick="cp('${ex}',this)">📋 Копіювати</button></div>
+      <div class="sb2"><div class="sl">💡 Результат</div><div class="sv">${c.res}</div></div>
+      <button class="buld-btn" onclick="openBuilder(${id})">🔧 Відкрити в конструкторі</button>
+    </div>`;
+}
+
+function openBuilder(id){
+  nav('bld');
+  selectBldCmd(id);
+  document.getElementById('bld-list').querySelectorAll('.bld-item').forEach(el=>{
+    el.classList.toggle('sel',parseInt(el.dataset.id)===id);
+  });
+}
+
+// ═══ COPY
+function cp(text,btn){
+  navigator.clipboard.writeText(text).catch(()=>{});
+  if(btn){btn.textContent='✓ Скопійовано!';btn.classList.add('ok');setTimeout(()=>{btn.textContent='📋 Копіювати';btn.classList.remove('ok');},2e3);}
+  showToast();
+}
+function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2e3);}
+
+// ═══════════════════════════════════════════════════════
+// BUILDER
+// ═══════════════════════════════════════════════════════
+function renderBld(){
+  const list=document.getElementById('bld-list');
+  list.innerHTML=CMD.map(c=>`
+    <div class="bld-item${bldCmd&&bldCmd.id===c.id?' sel':''}" data-id="${c.id}" onclick="selectBldCmd(${c.id})">
+      <span>${c.n}</span><span class="bld-cat">${CATI[c.cat]||''}</span>
+    </div>`).join('');
+  renderSaved();
+}
+function filterBld(q){
+  const items=document.querySelectorAll('.bld-item');
+  items.forEach(el=>{
+    const txt=el.textContent.toLowerCase();
+    el.style.display=txt.includes(q.toLowerCase())?'':'none';
+  });
+}
+function selectBldCmd(id){
+  bldCmd=CMD.find(c=>c.id===id);
+  document.querySelectorAll('.bld-item').forEach(el=>el.classList.toggle('sel',parseInt(el.dataset.id)===id));
+  document.getElementById('bld-info').innerHTML=`
+    <div style="font-size:14px;font-weight:800;color:var(--accent);font-family:'Courier New',monospace;margin-bottom:8px">${bldCmd.n}</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${CATI[bldCmd.cat]||''} ${bldCmd.cat}</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">${bldCmd.d}</div>
+    <div style="font-size:10px;color:var(--accent3);font-family:'Courier New',monospace;background:rgba(0,0,0,.2);padding:6px;border-radius:2px">${bldCmd.syn}</div>`;
+  renderBldParams();
+}
+function parseParams(syn){
+  const params=[];
+  const re1=/<([^>]+)>/g,re2=/\[([^\]]+)\]/g;
+  let m;
+  while((m=re1.exec(syn))!==null) params.push({label:m[1],req:true});
+  while((m=re2.exec(syn))!==null) params.push({label:m[1],req:false});
+  return params;
+}
+function getSuggestions(label){
+  const l=label.toLowerCase();
+  for(const [key,arr] of Object.entries(SUGG)){
+    if(l.includes(key)||key.includes(l)) return arr;
+  }
+  return [];
+}
+function renderBldParams(){
+  if(!bldCmd){return;}
+  const params=parseParams(bldCmd.syn);
+  const pp=document.getElementById('bld-params');
+  if(!params.length){
+    pp.innerHTML='<div class="bld-params-title">2. Параметри</div><div class="bld-empty-params">Ця команда не має параметрів</div>';
+    updateBldOut();return;
+  }
+  pp.innerHTML='<div class="bld-params-title">2. Заповніть параметри</div><div class="bld-fields" id="bld-fields">'+
+    params.map((p,i)=>{
+      const sugg=getSuggestions(p.label);
+      const listId='sugg-'+i;
+      return `<div class="bld-field">
+        <label>${p.label}${p.req?'<span class="req">*обов\'язково</span>':'<span class="opt-tag">[необов\'язково]</span>'}</label>
+        ${sugg.length?`<datalist id="${listId}">${sugg.map(s=>`<option value="${s}">`).join('')}</datalist>`:''}
+        <input type="text" list="${listId}" placeholder="${sugg[0]||p.label}" data-param="${p.label}" oninput="updateBldOut()">
+      </div>`;
+    }).join('')+'</div>';
+  updateBldOut();
+}
+function updateBldOut(){
+  if(!bldCmd){return;}
+  const inputs=document.querySelectorAll('#bld-fields input');
+  let result=bldCmd.n;
+  let params=parseParams(bldCmd.syn);
+  params.forEach((p,i)=>{
+    const inp=inputs[i];
+    const val=inp?inp.value.trim():'';
+    if(val) result+=' '+val;
+    else if(p.req) result+=' <span class="ph">&lt;'+p.label+'&gt;</span>';
+  });
+  document.getElementById('bld-out').innerHTML=result;
+}
+function getBuiltText(){
+  const out=document.getElementById('bld-out').textContent.trim();
+  return out;
+}
+function copyBuilt(){cp(getBuiltText(),null);showToast();}
+function saveBuilt(){
+  const txt=getBuiltText();
+  if(!bldCmd||txt.includes('<')){showToastMsg('⚠ Заповніть всі обов\'язкові поля!');return;}
+  if(bldSaved.some(s=>s===txt)){showToastMsg('Вже збережено!');return;}
+  bldSaved.unshift(txt);
+  localStorage.setItem('bldSaved',JSON.stringify(bldSaved));
+  renderSaved();
+  showToastMsg('💾 Збережено!');
+}
+function clearBld(){
+  bldCmd=null;
+  document.getElementById('bld-info').innerHTML='↖ Оберіть команду зліва';
+  document.getElementById('bld-params').innerHTML='<div class="bld-params-title">2. Параметри</div><div class="bld-empty-params">Спочатку оберіть команду</div>';
+  document.getElementById('bld-out').innerHTML='<span class="ph">← Оберіть команду і заповніть параметри</span>';
+  document.querySelectorAll('.bld-item').forEach(el=>el.classList.remove('sel'));
+}
+function clearSaved(){bldSaved=[];localStorage.setItem('bldSaved',JSON.stringify(bldSaved));renderSaved();}
+function deleteSaved(i){bldSaved.splice(i,1);localStorage.setItem('bldSaved',JSON.stringify(bldSaved));renderSaved();}
+function renderSaved(){
+  document.getElementById('saved-cnt').textContent=bldSaved.length;
+  const list=document.getElementById('saved-list');
+  if(!bldSaved.length){list.innerHTML='<div class="saved-empty">Немає збережених команд</div>';return;}
+  list.innerHTML=bldSaved.map((s,i)=>`
+    <div class="saved-cmd">
+      <span class="saved-cmd-text">${s}</span>
+      <button class="cpb" style="margin-top:0" onclick="navigator.clipboard.writeText(this.closest('.saved-cmd').querySelector('.saved-cmd-text').textContent);showToast()">📋</button>
+      <button class="saved-cmd-del" onclick="deleteSaved(${i})">✕</button>
+    </div>`).join('');
+}
+function showToastMsg(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>{t.classList.remove('show');setTimeout(()=>{t.textContent='✓ Скопійовано!';},300);},2e3);}
+
+// ═══════════════════════════════════════════════════════
+// GALLERY
+// ═══════════════════════════════════════════════════════
+let galFilter='Всі';
+function renderGal(){
+  const cats=['Всі',...new Set(GALLERY.map(g=>g.cat))];
+  const ff=document.getElementById('gal-filters');
+  ff.innerHTML=cats.map(c=>`<button class="gf-pill${c===galFilter?' on':''}" onclick="setGalFilter('${c}')">${c}</button>`).join('');
+  const grid=document.getElementById('gg');
+  const shown=galFilter==='Всі'?GALLERY:GALLERY.filter(g=>g.cat===galFilter);
+  grid.innerHTML='';
+  shown.forEach(item=>{
+    const div=document.createElement('div');div.className='gi';
+    const cv=document.createElement('canvas');cv.width=128;cv.height=128;
+    item.fn(cv.getContext('2d'),128);
+    div.appendChild(cv);
+    const lbl=document.createElement('div');lbl.className='glbl';lbl.textContent=item.n;div.appendChild(lbl);
+    const ctag=document.createElement('div');ctag.className='gcat-tag';ctag.textContent=item.cat;div.appendChild(ctag);
+    div.onclick=()=>openLb(item.fn,item.n);
+    grid.appendChild(div);
+  });
+}
+function setGalFilter(c){galFilter=c;renderGal();}
+function openLb(fn,name){
+  const cv=document.getElementById('lbcv');cv.width=512;cv.height=512;fn(cv.getContext('2d'),512);
+  document.getElementById('lb-name').textContent=name;
+  document.getElementById('lb').classList.add('open');
+}
+function closeLb(e){if(e.target===document.getElementById('lb')||e.target.className==='lb-close')document.getElementById('lb').classList.remove('open');}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+const ACCDFT='#00e5ff';
+function set(k,v){
+  cfg[k]=v;localStorage.setItem('dcfg',JSON.stringify(cfg));
+  applyCfg();syncUI();if(k==='pp'||k==='card')renderList();
+}
+function setAccent(c,el){
+  cfg.accent=c;localStorage.setItem('dcfg',JSON.stringify(cfg));
+  document.documentElement.style.setProperty('--accent',c);
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+}
+function applyCfg(){
+  const r=document.documentElement;
+  r.setAttribute('data-theme',cfg.theme||'dark');
+  r.style.setProperty('--fz',{sm:'12px',md:'14px',lg:'16px'}[cfg.fz||'md']);
+  r.style.setProperty('--accent',cfg.accent||ACCDFT);
+  r.style.setProperty('--fw',{sm:'260px',md:'340px',lg:'420px'}[cfg.fw||'md']);
+  document.body.style.fontFamily=cfg.ff==='mono'?"'Courier New',monospace":cfg.ff==='pixel'?"'Press Start 2P',monospace":"'Nunito',sans-serif";
+  document.body.setAttribute('data-card',cfg.card==='exp'?'exp':'');
+  r.setAttribute('data-texture',cfg.tex||'none');
+  r.setAttribute('data-anim',cfg.anim||'on');
+}
+function syncUI(){
+  const maps={theme:['dark','light','mc','neon'],fz:['sm','md','lg'],ff:['nunito','mono','pixel'],card:['com','exp'],pp:['10','20','30','50'],tex:['none','grass','stone','wood','nether','end'],anim:['on','off'],fw:['sm','md','lg']};
+  Object.entries(maps).forEach(([k,vals])=>{
+    const cv=cfg[k]||(k==='theme'?'dark':k==='fz'?'md':k==='pp'?'20':k==='fw'?'md':'');
+    document.querySelectorAll(`[onclick*="set('${k}'"]`).forEach(b=>{
+      const bv=b.getAttribute('onclick').match(/set\('.*?','(.*?)'\)/);
+      if(bv) b.classList.toggle('on',bv[1]===cv);
+    });
+  });
+  // sync accent swatches
+  const acc=cfg.accent||ACCDFT;
+  document.querySelectorAll('.color-swatch').forEach(s=>{
+    s.classList.toggle('on',s.style.background===acc||s.getAttribute('onclick').includes(acc));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// PIXEL ART FUNCTIONS
+// ═══════════════════════════════════════════════════════
+function px(ctx,x,y,c,S){ctx.fillStyle=c;ctx.fillRect(x*S,y*S,S,S);}
+function row(ctx,y,xs,c,S){xs.forEach(x=>px(ctx,x,y,c,S));}
+function rect(ctx,x,y,w,h,c,S){ctx.fillStyle=c;ctx.fillRect(x*S,y*S,w*S,h*S);}
+function bg(ctx,s,c='#141e2a'){ctx.fillStyle=c;ctx.fillRect(0,0,s,s);}
+
+function pxSword(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  const pts=[[7,1,'#7af6ff'],[7,2,'#5de6ff'],[7,3,'#4ecfe8'],[7,4,'#5de6ff'],[7,5,'#4ecfe8'],
+    [7,6,'#3ab8d0'],[6,6,'#3ab8d0'],[8,5,'#3ab8d0'],[8,6,'#2a9ab2'],
+    [7,7,'#2a9ab2'],[6,7,'#d0e8ff'],[8,7,'#d0e8ff'],[5,7,'#a0c0d8'],
+    [7,8,'#8060a0'],[7,9,'#8060a0'],[7,10,'#604070'],[7,11,'#503060']];
+  pts.forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxNetherSword(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#200808');
+  [[7,1,'#ff6644'],[7,2,'#ff4422'],[7,3,'#ff6644'],[7,4,'#ff4422'],[7,5,'#ff6644'],
+   [7,6,'#cc2200'],[6,6,'#cc2200'],[8,5,'#cc2200'],
+   [7,7,'#aa1100'],[6,7,'#ff9070'],[8,7,'#ff9070'],[7,8,'#8060a0'],
+   [7,9,'#8060a0'],[7,10,'#604070']].forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxBow(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  const bow=[[11,1,'#8B6020'],[10,2,'#a07828'],[9,3,'#8B6020'],[8,4,'#a07828'],[7,5,'#8B6020'],
+    [6,6,'#8B6020'],[5,7,'#a07828'],[5,8,'#8B6020'],[5,9,'#a07828'],[6,10,'#8B6020'],
+    [7,11,'#a07828'],[8,12,'#8B6020'],[9,13,'#a07828'],[10,14,'#8B6020'],[11,15,'#a07828'],
+    [11,2,'#c8c8c8'],[10,4,'#c8c8c8'],[9,6,'#c8c8c8'],[8,8,'#c8c8c8'],[9,10,'#c8c8c8'],[10,12,'#c8c8c8'],[11,14,'#c8c8c8']];
+  bow.forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxShield(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,4,1,8,12,'#c8b880',S);rect(ctx,5,13,6,2,'#c8b880',S);px(ctx,8,14,'#c8b880',S);
+  rect(ctx,5,2,6,3,'#8B6020',S);rect(ctx,5,6,6,6,'#c8c8d0',S);
+  px(ctx,4,1,'#a09060',S);px(ctx,11,1,'#a09060',S);px(ctx,4,12,'#a09060',S);px(ctx,11,12,'#a09060',S);
+}
+function pxPickaxe(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  [[2,2,'#7af6ff'],[3,2,'#5de6ff'],[4,2,'#5de6ff'],[5,2,'#7af6ff'],[6,2,'#5de6ff'],[7,2,'#7af6ff'],
+   [2,3,'#4ecfe8'],[3,3,'#3ab8d0'],[7,3,'#3ab8d0'],
+   [3,4,'#3ab8d0'],[4,3,'#4ecfe8'],
+   [5,4,'#8B6020'],[6,5,'#8B6020'],[7,6,'#8B6020'],[8,7,'#8B6020'],[9,8,'#8B6020'],[10,9,'#8B6020'],[11,10,'#a07828'],[12,11,'#8B6020']].forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxShovel(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,7,1,2,5,'#5de6ff',S);rect(ctx,6,5,4,2,'#3ab8d0',S);
+  rect(ctx,7,7,2,8,'#8B6020',S);rect(ctx,6,14,4,1,'#604018',S);
+}
+function pxAxe(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,4,1,6,6,'#ffd060',S);rect(ctx,4,7,4,3,'#ffc840',S);
+  rect(ctx,6,2,2,8,'#c89a00',S);
+  rect(ctx,7,9,2,6,'#8B6020',S);
+  px(ctx,4,1,'#ffe880',S);px(ctx,9,1,'#ffe880',S);px(ctx,4,6,'#a07800',S);
+}
+function pxGrass(ctx,s=128){
+  const S=s/16;
+  const top=['#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28','#3a9a20','#4aaa28'];
+  const mid='#7a5020',dirt=['#6b4518','#5a3a10','#6b4518','#7a5020','#5a3a10','#6b4518','#5a3a10','#7a5020','#6b4518','#5a3a10','#7a5020','#6b4518','#5a3a10','#6b4518','#5a3a10','#7a5020'];
+  for(let x=0;x<16;x++){px(ctx,x,0,top[x],S);px(ctx,x,1,top[x],S);px(ctx,x,2,top[x],S);px(ctx,x,3,mid,S);}
+  for(let y=4;y<16;y++) for(let x=0;x<16;x++) px(ctx,x,y,dirt[x%16],S);
+}
+function pxDiamondBlock(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#003040');
+  for(let x=0;x<16;x++) for(let y=0;y<16;y++){
+    const v=(x+y)%4;
+    const c=v===0?'#00e5ff':v===1?'#00b8d0':v===2?'#0090a8':'#006f82';
+    px(ctx,x,y,c,S);
+  }
+  [0,4,8,12].forEach(x=>[0,4,8,12].forEach(y=>rect(ctx,x,y,2,2,'rgba(255,255,255,0.15)',S)));
+}
+function pxTNT(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#1a0808');
+  for(let x=0;x<16;x++) for(let y=0;y<16;y++) px(ctx,x,y,(x+y)%2?'#902010':'#c03020',S);
+  rect(ctx,0,2,16,3,'#e8e8e8',S);rect(ctx,0,11,16,3,'#e8e8e8',S);
+  ctx.fillStyle='#303030';
+  [[3,4],[4,4],[5,4],[6,4],[3,5],[3,6],[3,7],[4,6],[5,6],[6,6],[6,5],[7,7],[7,5],[7,4]].forEach(([x,y])=>rect(ctx,x,y,1,1,'#303030',S));
+}
+function pxChest(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#241208');
+  rect(ctx,1,2,14,11,'#8b6020',S);rect(ctx,2,3,12,1,'#c8a840',S);rect(ctx,1,7,14,1,'#604010',S);
+  rect(ctx,5,5,6,4,'#c8a840',S);rect(ctx,6,6,4,2,'#ffd060',S);rect(ctx,7,6,2,2,'#e8b820',S);
+  rect(ctx,1,2,1,11,'#a08030',S);rect(ctx,14,2,1,11,'#6b4810',S);
+}
+function pxEnderChest(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#060612');
+  rect(ctx,1,2,14,11,'#0d0d2a',S);rect(ctx,2,3,12,1,'#4040c0',S);rect(ctx,1,7,14,1,'#1a1a50',S);
+  rect(ctx,5,5,6,4,'#4040c0',S);rect(ctx,6,6,4,2,'#00e5ff',S);
+  [0,15].forEach(x=>rect(ctx,x,1,1,13,'#00e5ff',S));
+  [0,13].forEach(y=>rect(ctx,0,y,16,1,'#4040c0',S));
+}
+function pxTorch(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#0a0a00');
+  ctx.fillStyle='#ffe060';rect(ctx,7,0,2,1,'#ffee80',S);rect(ctx,7,1,2,1,'#ffcc40',S);
+  ctx.fillStyle='#ff9900';rect(ctx,7,2,2,1,'#ff9900',S);rect(ctx,7,3,2,1,'#cc5500',S);
+  rect(ctx,7,4,2,11,'#a07828',S);
+  ctx.fillStyle='rgba(255,240,0,0.08)';
+  for(let r=1;r<=4;r++){ctx.beginPath();ctx.arc(8*S,1*S,r*S,0,Math.PI*2);ctx.fill();}
+}
+function pxLantern(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#0a0a00');
+  rect(ctx,6,0,4,1,'#808088',S);rect(ctx,5,1,6,9,'#606068',S);rect(ctx,6,2,4,7,'#ffd060',S);
+  rect(ctx,5,10,6,1,'#808088',S);rect(ctx,6,11,4,2,'#606068',S);rect(ctx,6,13,4,1,'#808088',S);
+  ctx.fillStyle='rgba(255,200,50,0.1)';
+  for(let r=1;r<=5;r++){ctx.beginPath();ctx.arc(8*S,6*S,r*S,0,Math.PI*2);ctx.fill();}
+}
+function pxCreeper(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,3,0,10,8,'#3a9a30',S);
+  [[4,2,2,2,'#28701e'],[10,2,2,2,'#28701e'],[6,4,1,3,'#28701e'],[9,4,1,3,'#28701e'],[7,5,2,2,'#28701e'],[6,6,4,1,'#1a5014']].forEach(([x,y,w,h,c])=>rect(ctx,x,y,w,h,c,S));
+  rect(ctx,4,8,4,8,'#3a9a30',S);rect(ctx,8,8,4,8,'#3a9a30',S);
+  rect(ctx,5,8,2,1,'#1a5014',S);rect(ctx,9,8,2,1,'#1a5014',S);
+}
+function pxSteve(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,4,0,8,8,'#c8a870',S);
+  [[5,2,2,2,'#fff'],[9,2,2,2,'#fff'],[5,2,1,1,'#3060c0'],[10,2,1,1,'#3060c0'],[7,4,2,1,'#c07060'],[5,5,6,1,'#c07060']].forEach(([x,y,w,h,c])=>rect(ctx,x,y,w,h,c,S));
+  rect(ctx,2,8,12,6,'#2850c0',S);
+  rect(ctx,2,8,4,6,'#1a40b0',S);rect(ctx,10,8,4,6,'#3860d0',S);
+  rect(ctx,2,14,4,2,'#707070',S);rect(ctx,10,14,4,2,'#707070',S);
+}
+function pxAlex(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,4,0,8,8,'#d4a462',S);
+  [[5,2,2,2,'#fff'],[9,2,2,2,'#fff'],[5,2,1,1,'#804020'],[10,2,1,1,'#804020'],[7,4,2,1,'#c07060']].forEach(([x,y,w,h,c])=>rect(ctx,x,y,w,h,c,S));
+  // hair
+  rect(ctx,4,0,8,2,'#c84020',S);rect(ctx,3,0,1,6,'#c84020',S);rect(ctx,12,0,1,6,'#c84020',S);
+  rect(ctx,3,8,10,6,'#388020',S);rect(ctx,3,14,4,2,'#505050',S);rect(ctx,9,14,4,2,'#505050',S);
+}
+function pxDiamond(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  const gem=[[7,1,'#7af6ff'],[8,1,'#5de6ff'],[6,2,'#7af6ff'],[7,2,'#5de6ff'],[8,2,'#4ecfe8'],[9,2,'#5de6ff'],
+    [5,3,'#5de6ff'],[6,3,'#4ecfe8'],[7,3,'#3ab8d0'],[8,3,'#3ab8d0'],[9,3,'#4ecfe8'],[10,3,'#5de6ff'],
+    [5,4,'#4ecfe8'],[6,4,'#3ab8d0'],[7,4,'#2a9ab2'],[8,4,'#2a9ab2'],[9,4,'#3ab8d0'],[10,4,'#4ecfe8'],
+    [5,5,'#3ab8d0'],[6,5,'#2a9ab2'],[7,5,'#1a7898'],[8,5,'#1a7898'],[9,5,'#2a9ab2'],[10,5,'#3ab8d0'],
+    [6,6,'#2a9ab2'],[7,6,'#1a7898'],[8,6,'#1a7898'],[9,6,'#2a9ab2'],
+    [6,7,'#1a7898'],[7,7,'#0a5a7a'],[8,7,'#0a5a7a'],[9,7,'#1a7898'],
+    [7,8,'#1a7898'],[8,8,'#0a5a7a'],[7,9,'#0a5a7a'],[8,9,'#1a7898']];
+  gem.forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxEmerald(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  [[7,1,'#a0ff80'],[8,1,'#80e060'],[6,2,'#80e060'],[7,2,'#60c840'],[8,2,'#40a820'],[9,2,'#60c840'],
+   [5,3,'#80e060'],[6,3,'#60c840'],[7,3,'#40a820'],[8,3,'#208800'],[9,3,'#40a820'],[10,3,'#60c840'],
+   [5,4,'#60c840'],[6,4,'#40a820'],[7,4,'#208800'],[8,4,'#106000'],[9,4,'#208800'],[10,4,'#40a820'],
+   [5,5,'#40a820'],[6,5,'#208800'],[7,5,'#106000'],[8,5,'#106000'],[9,5,'#208800'],[10,5,'#40a820'],
+   [6,6,'#208800'],[7,6,'#106000'],[8,6,'#106000'],[9,6,'#208800'],
+   [7,7,'#208800'],[8,7,'#106000'],[7,8,'#40a820'],[8,8,'#208800'],[7,9,'#208800']].forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxNetherite(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#1a1018');
+  for(let x=3;x<13;x++) for(let y=3;y<13;y++){
+    const d=((x-7.5)**2+(y-7.5)**2);
+    if(d<20){const bri=d<8?'#6a5a7a':d<14?'#584870':'#463858';px(ctx,x,y,bri,S);}
+  }
+  [[4,4,'#8a7a9a'],[11,4,'#8a7a9a'],[4,11,'#8a7a9a'],[11,11,'#8a7a9a']].forEach(([x,y,c])=>px(ctx,x,y,c,S));
+}
+function pxPearl(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#0a1020');
+  for(let x=4;x<12;x++) for(let y=4;y<12;y++){
+    const d=Math.sqrt((x-8)**2+(y-8)**2);
+    if(d<4){const f=d/4;const r=Math.floor(20+f*60),g=Math.floor(60+f*80),b=Math.floor(80+f*50);px(ctx,x,y,`rgb(${r},${g},${b})`,S);}
+  }
+  px(ctx,6,5,'#90d0e8',S);px(ctx,10,7,'rgba(180,220,240,0.5)',S);
+}
+function pxGoldenApple(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#1a0a00');
+  for(let x=4;x<12;x++) for(let y=4;y<12;y++){
+    const d=Math.sqrt((x-8)**2+(y-8)**2);
+    if(d<4){px(ctx,x,y,d<2?'#ffe880':'#ffd060',S);}
+  }
+  rect(ctx,7,2,2,2,'#306020',S);rect(ctx,6,3,1,1,'#306020',S);rect(ctx,9,3,1,1,'#306020',S);
+  [4,5,6,7,8,9,10,11].forEach(x=>{ctx.fillStyle='rgba(200,160,0,0.4)';ctx.fillRect(x*S,4*S,S,2);ctx.fillRect(x*S,12*S,S,2);});
+}
+function pxPotion(ctx,s=128){
+  const S=s/16;bg(ctx,s,'#100820');
+  rect(ctx,6,1,4,3,'#a0a0b0',S);rect(ctx,5,2,1,1,'#c0c0d0',S);rect(ctx,10,2,1,1,'#c0c0d0',S);
+  for(let x=4;x<12;x++) for(let y=5;y<15;y++){
+    const d=Math.sqrt((x-8)**2+(y-10)**2);
+    if(d<4){px(ctx,x,y,y<8?'#dd44ff':'#9922cc',S);}
+  }
+  rect(ctx,5,6,2,3,'rgba(255,255,255,0.2)',S);
+  px(ctx,5,5,'#ee88ff',S);px(ctx,6,5,'#cc66dd',S);
+}
+function pxTotem(ctx,s=128){
+  const S=s/16;bg(ctx,s);
+  rect(ctx,4,0,8,16,'#e8c840',S);rect(ctx,5,1,6,14,'#d4a820',S);
+  rect(ctx,5,2,2,2,'#604020',S);rect(ctx,9,2,2,2,'#604020',S);rect(ctx,7,4,2,2,'#ff6020',S);
+  rect(ctx,5,7,6,1,'#604020',S);rect(ctx,4,8,8,3,'#e8c840',S);rect(ctx,6,9,4,1,'#604020',S);
+  rect(ctx,3,11,2,4,'#e8c840',S);rect(ctx,11,11,2,4,'#e8c840',S);
+  px(ctx,4,0,'#ffe880',S);px(ctx,11,0,'#ffe880',S);
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  buildCats();
+  renderList();
+  applyCfg();
+  syncUI();
+  renderBld();
+  renderGal();
+});
+</script>
+</body>
+</html>
